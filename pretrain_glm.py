@@ -266,7 +266,9 @@ def forward_step(data_iterator, model, args, timers, mems):
     loss = torch.sum(losses.view(-1) * loss_mask)
     if loss_mask.sum().item() > 0:
         loss = loss / loss_mask.sum()
-
+    # with open("/home/zhangxiaoyu/glm_flow_eager_eval_loss.txt",'a') as f:
+    #     f.write(str(loss.item())+'\n')
+    # print(loss)
     return loss, mems, mode
 
 
@@ -331,6 +333,8 @@ def train(model, optimizer, lr_scheduler,
     timers('interval time').start()
     report_memory_flag = True
     mems = []
+    import time
+    tb = time.time()
     while args.iteration < args.train_iters:
 
         lm_loss, skipped_iter, mems = train_step(train_data_iterator,
@@ -380,7 +384,10 @@ def train(model, optimizer, lr_scheduler,
             evaluate_and_print_results(
                 prefix, val_data_iterator, model, args, timers, verbose=False, step=args.iteration,
                 summary_writer=summary_writer, forward_step_func=forward_step)
-
+    te = time.time()
+    if flow.env.get_rank() == 0:
+        print(te-tb)
+    exit(0)
     return args.iteration, skipped_iters
 
 
