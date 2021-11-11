@@ -349,7 +349,8 @@ def train(model, optimizer, lr_scheduler,
         total_lm_loss += lm_loss.data.detach().float()
 
         # Logging.
-        if args.iteration % args.log_interval == 0:
+        # if args.iteration % args.log_interval == 0:
+        if False:
             learning_rate = optimizer.param_groups[0]['lr']
             avg_lm_loss = total_lm_loss.item() / args.log_interval
             elapsed_time = timers('interval time').elapsed()
@@ -375,17 +376,19 @@ def train(model, optimizer, lr_scheduler,
                             'batch generator', 'data loader'],
                            normalizer=args.log_interval)
         # Checkpointing
-        if args.save and args.save_interval and args.iteration % args.save_interval == 0:
+        # if args.save and args.save_interval and args.iteration % args.save_interval == 0:
+        if False:
             save_checkpoint(args.iteration, model, optimizer, lr_scheduler, args)
 
         # Evaluation
-        if args.eval_interval and args.iteration % args.eval_interval == 0 and args.do_valid:
+        # if args.eval_interval and args.iteration % args.eval_interval == 0 and args.do_valid:
+        if False:
             prefix = 'iteration {}'.format(args.iteration)
             evaluate_and_print_results(
                 prefix, val_data_iterator, model, args, timers, verbose=False, step=args.iteration,
                 summary_writer=summary_writer, forward_step_func=forward_step)
     te = time.time()
-    if flow.env.get_rank() == 0:
+    if torch.env.get_rank() == 0:
         print(te-tb)
     exit(0)
     return args.iteration, skipped_iters
