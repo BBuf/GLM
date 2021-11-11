@@ -388,8 +388,7 @@ def train(model, optimizer, lr_scheduler,
                 prefix, val_data_iterator, model, args, timers, verbose=False, step=args.iteration,
                 summary_writer=summary_writer, forward_step_func=forward_step)
     te = time.time()
-    if torch.env.get_rank() == 0:
-        print(te-tb)
+    print(te-tb)
     exit(0)
     return args.iteration, skipped_iters
 
