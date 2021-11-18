@@ -266,8 +266,8 @@ def forward_step(data_iterator, model, args, timers, mems):
     loss = torch.sum(losses.view(-1) * loss_mask)
     if loss_mask.sum().item() > 0:
         loss = loss / loss_mask.sum()
-    # with open("/home/zhangxiaoyu/glm_flow_eager_eval_loss.txt",'a') as f:
-    #     f.write(str(loss.item())+'\n')
+    with open("/home/zhangxiaoyu/glm_torch_fp32_loss.txt",'a') as f:
+        f.write(str(loss.item())+'\n')
     # print(loss)
     return loss, mems, mode
 
@@ -322,7 +322,8 @@ def train(model, optimizer, lr_scheduler,
     """Train the model."""
 
     # Turn on training mode which enables dropout.
-    model.train()
+    # model.train()
+    model.eval()
 
     # Tracking loss.
     total_lm_loss = 0.0
