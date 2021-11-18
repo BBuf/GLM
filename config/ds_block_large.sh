@@ -30,7 +30,7 @@ gpt_options=" \
        --lr-decay-iters 160000 \
        --lr-decay-ratio 0.05 \
        --warmup .05 \
-       --fp16 \
+       # --fp16 \
 "
 # gpt_options="${gpt_options}
 #                --deepspeed \

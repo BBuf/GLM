@@ -247,22 +247,29 @@ def setup_model_and_optimizer(args, model_type=None, multi_token=True, num_label
                       spell_length=spell_length)
     param_groups = get_optimizer_param_groups(model)
 
-    if args.train_data is not None or args.data_dir is not None and (args.epochs > 0 or args.train_iters > 0):
-        if args.deepspeed:
-            print_rank_0("DeepSpeed is enabled.")
+    # if args.train_data is not None or args.data_dir is not None and (args.epochs > 0 or args.train_iters > 0):
+    #     if args.deepspeed:
+    #         print_rank_0("DeepSpeed is enabled.")
 
-            model, optimizer, _, _ = deepspeed.initialize(
-                model=model,
-                model_parameters=param_groups,
-                args=args,
-                mpu=mpu,
-                dist_init_required=False
-            )
-        else:
-            optimizer = get_optimizer(param_groups, args)
-        lr_scheduler = get_learning_rate_scheduler(optimizer, args)
-    else:
-        optimizer, lr_scheduler = None, None
+    #         model, optimizer, _, _ = deepspeed.initialize(
+    #             model=model,
+    #             model_parameters=param_groups,
+    #             args=args,
+    #             mpu=mpu,
+    #             dist_init_required=False
+    #         )
+    #     else:
+    #         optimizer = get_optimizer(param_groups, args)
+    #     lr_scheduler = get_learning_rate_scheduler(optimizer, args)
+    # else:
+    #     optimizer, lr_scheduler = None, None
+    optimizer = torch.optim.SGD(
+            model.parameters(),
+            lr=args.lr,
+            momentum=0.9,
+            weight_decay=0.0,
+        )
+    lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=100000)  
 
     return model, optimizer, lr_scheduler
 
@@ -333,6 +340,7 @@ def train_step(data_iterator, model, optimizer, lr_scheduler, args, timers, forw
         # Forward model for one step.
         timers('forward').start()
         lm_loss, mems, _ = forward_step_func(data_iterator, model, args, timers, mems)
+        lm_loss = lm_loss * 0.0
         timers('forward').stop()
         # print_rank_0("Forward step")
         if not args.deepspeed:
