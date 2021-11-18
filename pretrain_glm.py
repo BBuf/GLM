@@ -266,7 +266,7 @@ def forward_step(data_iterator, model, args, timers, mems):
     loss = torch.sum(losses.view(-1) * loss_mask)
     if loss_mask.sum().item() > 0:
         loss = loss / loss_mask.sum()
-    with open("/home/zhangxiaoyu/glm_torch_adam_fp32.txt",'a') as f:
+    with open("/home/zhangxiaoyu/glm_torch_fp32_loss.txt",'a') as f:
         f.write(str(loss.item())+'\n')
     # print(loss)
     return loss, mems, mode
@@ -328,13 +328,6 @@ def train(model, optimizer, lr_scheduler,
     mems = []
     # Tracking loss.
     total_lm_loss = 0.0
-    for i in range(10):
-        lm_loss, skipped_iter, mems = train_step(train_data_iterator,
-                                                 model,
-                                                 optimizer,
-                                                 lr_scheduler,
-                                                 args, timers, mems=mems, forward_step_func=forward_step)
-
     # Iterations.
     skipped_iters = 0
 
